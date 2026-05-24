@@ -1,35 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NCD Control Panel</title>
+  <title>NCD Stable Panel</title>
 </head>
 <body style="width:220px; text-align:center; font-family:Arial;">
 
-  <h3>🩺 NCD Panel</h3>
+<h3>🩺 NCD Stable</h3>
 
-  <button onclick="loadData()">📊 Load</button><br><br>
-  <button onclick="next()">▶ Next</button><br><br>
-  <button onclick="done()">✔ Done</button><br><br>
-  <button onclick="skip()">⏭ Skip</button>
+<button onclick="load()">📊 Load</button><br><br>
+<button onclick="next()">▶ Next</button>
 
-  <script>
-    function loadData(){
-      alert("Sheet Loading...");
-      window.postMessage({action:"LOAD_NCD"}, "*");
-    }
+<script>
+function load(){
+    window.postMessage({action:"LOAD_NCD"}, "*");
+}
 
-    function next(){
-      window.postMessage({action:"NEXT_NCD"}, "*");
-    }
-
-    function done(){
-      window.postMessage({action:"DONE_NCD"}, "*");
-    }
-
-    function skip(){
-      window.postMessage({action:"SKIP_NCD"}, "*");
-    }
-  </script>
+function next(){
+    window.postMessage({action:"NEXT_NCD"}, "*");
+}
+</script>
 
 </body>
 </html>
