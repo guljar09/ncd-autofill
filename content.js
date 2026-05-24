@@ -1,45 +1,71 @@
-console.log("NCD Auto Fill Engine Loaded");
+console.log("NCD FULL AUTO SYSTEM LOADED");
 
-// Google Sheet data (example object - pachi real sheet thi connect thase)
-let currentPatient = null;
+let patients = [];
+let currentIndex = 0;
 
-// Simulated function (pachi sheet thi real data aavse)
-function setPatient(data) {
-    currentPatient = data;
-    autoFill();
+// load data from sheet
+async function load() {
+    patients = await fetchPatients();
+    console.log("Patients Loaded:", patients);
+
+    if (patients.length > 0) {
+        loadPatient(0);
+    } else {
+        alert("No Pending Patients ✔️");
+    }
 }
 
-// Auto fill function
-function autoFill() {
-    if (!currentPatient) return;
+// load one patient
+function loadPatient(index) {
+    let p = patients[index];
+    if (!p) return;
 
-    // Try finding common input fields
-    let inputs = document.querySelectorAll("input, select, textarea");
+    currentIndex = index;
 
-    inputs.forEach(input => {
-        let name = input.name?.toLowerCase() || "";
-        let id = input.id?.toLowerCase() || "";
+    autoFill(p);
+}
 
-        // NAME field
+// auto fill on page
+function autoFill(p) {
+
+    let inputs = document.querySelectorAll("input, textarea, select");
+
+    inputs.forEach(i => {
+        let name = (i.name || "").toLowerCase();
+        let id = (i.id || "").toLowerCase();
+
         if (name.includes("name") || id.includes("name")) {
-            input.value = currentPatient.name;
+            i.value = p.name;
         }
 
-        // SYSTOLIC
         if (name.includes("sys") || id.includes("sys")) {
-            input.value = currentPatient.systolic;
+            i.value = p.systolic;
         }
 
-        // DIASTOLIC
         if (name.includes("dia") || id.includes("dia")) {
-            input.value = currentPatient.diastolic;
+            i.value = p.diastolic;
         }
 
-        // DIABETIC
         if (name.includes("diab") || id.includes("diab")) {
-            input.value = currentPatient.diabetic;
+            i.value = p.diabetic;
         }
     });
 
-    alert("Auto Fill Done ✔️");
+    alert("Patient Loaded ✔️: " + p.name);
 }
+
+// next patient
+function nextPatient() {
+    if (currentIndex + 1 < patients.length) {
+        loadPatient(currentIndex + 1);
+    } else {
+        alert("All Done ✔️");
+    }
+}
+
+// expose functions
+window.loadNCD = load;
+window.nextNCD = nextPatient;
+
+// auto start after login page load
+setTimeout(load, 3000);
