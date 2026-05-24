@@ -1,31 +1,39 @@
 console.log("NCD Stable System Loaded");
 
+// -------------------- DATA --------------------
 let patients = [];
-let index = 0;
+let currentIndex = 0;
 
-// load sheet data
+// -------------------- LOAD SHEET DATA --------------------
 async function loadNCD() {
-    patients = await fetchPatients();
+    try {
+        patients = await fetchPatients();
 
-    if (!patients.length) {
-        alert("No Pending Patients ✔️");
-        return;
+        if (!patients || patients.length === 0) {
+            alert("No Pending Patients ✔️");
+            return;
+        }
+
+        console.log("Patients Loaded:", patients);
+
+        loadPatient(0);
+
+    } catch (err) {
+        console.error("Error loading NCD:", err);
+        alert("Error loading sheet data");
     }
-
-    loadPatient(0);
 }
 
-// load one patient
-function loadPatient(i) {
-    let p = patients[i];
+// -------------------- LOAD SINGLE PATIENT --------------------
+function loadPatient(index) {
+    let p = patients[index];
     if (!p) return;
 
-    index = i;
-
+    currentIndex = index;
     autoFill(p);
 }
 
-// safe auto fill (stable version)
+// -------------------- AUTO FILL LOGIC --------------------
 function autoFill(p) {
 
     let inputs = document.querySelectorAll("input, textarea, select");
@@ -34,36 +42,54 @@ function autoFill(p) {
         let name = (el.name || "").toLowerCase();
         let id = (el.id || "").toLowerCase();
 
+        // NAME
         if (name.includes("name") || id.includes("name")) {
             el.value = p.name;
         }
 
-        if (name.includes("sys")) {
+        // SYSTOLIC
+        if (name.includes("sys") || id.includes("sys")) {
             el.value = p.systolic;
         }
 
-        if (name.includes("dia")) {
+        // DIASTOLIC
+        if (name.includes("dia") || id.includes("dia")) {
             el.value = p.diastolic;
         }
 
-        if (name.includes("diab")) {
+        // DIABETIC
+        if (name.includes("diab") || id.includes("diab")) {
             el.value = p.diabetic;
         }
     });
 
-    console.log("Loaded:", p.name);
-    alert("Patient Loaded ✔️");
+    console.log("Auto filled:", p.name);
+    alert("Patient Loaded ✔️ " + p.name);
 }
 
-// next patient
+// -------------------- NEXT PATIENT --------------------
 function nextNCD() {
-    if (index + 1 < patients.length) {
-        loadPatient(index + 1);
+    if (currentIndex + 1 < patients.length) {
+        loadPatient(currentIndex + 1);
     } else {
-        alert("All Done ✔️");
+        alert("All Done ✔️ No more patients");
     }
 }
 
-// expose functions
+// -------------------- POPUP CONTROLS --------------------
+window.addEventListener("message", (e) => {
+
+    if (!e.data) return;
+
+    if (e.data.action === "LOAD") {
+        loadNCD();
+    }
+
+    if (e.data.action === "NEXT") {
+        nextNCD();
+    }
+});
+
+// -------------------- EXPOSE FUNCTIONS --------------------
 window.loadNCD = loadNCD;
 window.nextNCD = nextNCD;
