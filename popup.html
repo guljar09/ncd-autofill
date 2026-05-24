@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NCD</title>
+  <title>NCD Control Panel</title>
 </head>
-<body style="width:200px; text-align:center;">
-  <h3>NCD Tool</h3>
+<body style="width:220px; text-align:center; font-family:Arial;">
 
-  <button onclick="run()">Run</button>
+  <h3>🩺 NCD Panel</h3>
+
+  <button onclick="loadData()">📊 Load</button><br><br>
+  <button onclick="next()">▶ Next</button><br><br>
+  <button onclick="done()">✔ Done</button><br><br>
+  <button onclick="skip()">⏭ Skip</button>
 
   <script>
-    function run() {
-      alert("NCD Button Clicked ✔️");
+    function loadData(){
+      alert("Sheet Loading...");
+      window.postMessage({action:"LOAD_NCD"}, "*");
+    }
+
+    function next(){
+      window.postMessage({action:"NEXT_NCD"}, "*");
+    }
+
+    function done(){
+      window.postMessage({action:"DONE_NCD"}, "*");
+    }
+
+    function skip(){
+      window.postMessage({action:"SKIP_NCD"}, "*");
     }
   </script>
+
 </body>
 </html>
