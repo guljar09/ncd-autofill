@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NCD Stable Panel</title>
+  <title>NCD Panel</title>
 </head>
-<body style="width:220px; text-align:center; font-family:Arial;">
+<body style="width:200px; text-align:center; font-family:Arial;">
 
-<h3>🩺 NCD Stable</h3>
+<h3>🩺 NCD Panel</h3>
 
 <button onclick="load()">📊 Load</button><br><br>
 <button onclick="next()">▶ Next</button>
 
 <script>
 function load(){
-    window.postMessage({action:"LOAD_NCD"}, "*");
+    window.postMessage({action:"LOAD"}, "*");
 }
 
 function next(){
-    window.postMessage({action:"NEXT_NCD"}, "*");
+    window.postMessage({action:"NEXT"}, "*");
 }
 </script>
 
