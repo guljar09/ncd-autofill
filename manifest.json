@@ -1,8 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "NCD Automation System",
-  "version": "1.0",
-  "description": "Google Sheet based NCD automation",
+  "name": "NCD Ultra System",
+  "version": "3.0",
   "permissions": ["activeTab", "scripting"],
   "action": {
     "default_popup": "popup.html"
