@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NCD Panel</title>
+  <title>NCD Ultra</title>
 </head>
-<body style="width:200px; text-align:center; font-family:Arial;">
+<body style="width:220px; text-align:center; font-family:Arial;">
 
-<h3>🩺 NCD Panel</h3>
+<h3>🩺 NCD PANEL</h3>
 
 <button onclick="load()">📊 Load</button><br><br>
-<button onclick="next()">▶ Next</button>
+<button onclick="start()">🚀 Start</button><br><br>
+<button onclick="stop()">⏹ Stop</button>
 
 <script>
 function load(){
     window.postMessage({action:"LOAD"}, "*");
 }
 
-function next(){
-    window.postMessage({action:"NEXT"}, "*");
+function start(){
+    window.postMessage({action:"START"}, "*");
+}
+
+function stop(){
+    window.postMessage({action:"STOP"}, "*");
 }
 </script>
+
+<p style="font-size:12px;">Ultra Version</p>
 
 </body>
 </html>
