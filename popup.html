@@ -1,28 +1,16 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>NCD</title>
+</head>
 
-<body style="width:200px;text-align:center;font-family:Arial;">
+<body style="width:220px;text-align:center;font-family:Arial;">
 
 <h3>NCD PANEL</h3>
 
 <button id="startBtn">SHOW DATA</button>
 
-<script>
-
-document.getElementById("startBtn").addEventListener("click", async () => {
-
-    const tabs = await chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    });
-
-    chrome.tabs.sendMessage(tabs[0].id, {
-        action: "START"
-    });
-
-});
-
-</script>
+<script src="popup.js"></script>
 
 </body>
 </html>
