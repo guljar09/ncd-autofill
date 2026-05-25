@@ -1,75 +1,70 @@
 console.log("NCD Ultra Active");
 
 let patients = [];
-let index = 0;
 let running = false;
 
-async function loadNCD() {
-    patients = await fetchPatients();
+// SHEET LOAD
+async function fetchPatients() {
 
-    if (!patients.length) {
-        alert("No Pending Patients ✔️");
-        return;
+    const SHEET_ID = "1tdeGy-CGVQuz54NcM7DSRf5REqDS1_Vf_u-NsHw8Q30";
+
+    const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+    try {
+
+        const res = await fetch(URL);
+        const text = await res.text();
+
+        const rows = text.split("\n").map(r => r.split(","));
+
+        let arr = [];
+
+        for (let i = 1; i < rows.length; i++) {
+
+            let r = rows[i];
+
+            if (r[4] && r[4].toLowerCase().includes("pending")) {
+
+                arr.push({
+                    name: r[0] || "",
+                    systolic: r[1] || "",
+                    diastolic: r[2] || "",
+                    diabetic: r[3] || ""
+                });
+            }
+        }
+
+        return arr;
+
+    } catch (e) {
+        console.log(e);
+        return [];
     }
-
-    alert("Loaded ✔️ " + patients.length);
 }
 
-async function startAutoRun() {
-
-    patients = await fetchPatients();
-
-    if (!patients.length) {
-        alert("No Pending Patients ✔️");
-        return;
-    }
-
-    running = true;
-    index = 0;
-
-    for (let i = 0; i < patients.length; i++) {
-
-        if (!running) break;
-
-        index = i;
-
-        autoFill(patients[i]);
-
-        await new Promise(r => setTimeout(r, 4000));
-    }
-
-    running = false;
-    alert("ALL DONE ✔️");
-}
-
-function stopAutoRun() {
-    running = false;
-    alert("STOPPED ⏹️");
-}
-
+// AUTO FILL
 function autoFill(p) {
 
-    let inputs = document.querySelectorAll("input, textarea, select");
+    let inputs = document.querySelectorAll("input");
 
     inputs.forEach(el => {
 
         let n = (el.name || "").toLowerCase();
         let id = (el.id || "").toLowerCase();
-        let ph = (el.placeholder || "").toLowerCase();
 
-        if (n.includes("name") || id.includes("name") || ph.includes("name")) {
+        if (n.includes("name") || id.includes("name")) {
             el.value = p.name;
         }
 
-        if (n.includes("sys") || id.includes("sys") || ph.includes("sys")) {
+        if (n.includes("sys") || id.includes("sys")) {
             el.value = p.systolic;
         }
 
-        if (n.includes("dia") || id.includes("dia") || ph.includes("dia")) {
+        if (n.includes("dia") || id.includes("dia")) {
             el.value = p.diastolic;
         }
 
-        if (n.includes("diab") || id.includes("diab") || ph.includes("diab")) {
+        if (n.includes("diab") || id.includes("diab")) {
             el.value = p.diabetic;
         }
     });
@@ -77,15 +72,43 @@ function autoFill(p) {
     console.log("Filled:", p.name);
 }
 
-window.loadNCD = loadNCD;
-window.startAutoRun = startAutoRun;
-window.stopAutoRun = stopAutoRun;
+// START AUTO
+async function startAutoRun() {
 
-window.addEventListener("message", (e) => {
+    patients = await fetchPatients();
 
-    if (!e.data) return;
+    if (!patients.length) {
+        alert("No patients found");
+        return;
+    }
 
-    if (e.data.action === "LOAD") loadNCD();
-    if (e.data.action === "START") startAutoRun();
-    if (e.data.action === "STOP") stopAutoRun();
+    running = true;
+
+    for (let i = 0; i < patients.length; i++) {
+
+        if (!running) break;
+
+        autoFill(patients[i]);
+
+        await new Promise(r => setTimeout(r, 4000));
+    }
+
+    alert("All Done ✔️");
+}
+
+// STOP
+function stopAutoRun() {
+    running = false;
+}
+
+// BUTTON LISTENER
+chrome.runtime.onMessage.addListener((req) => {
+
+    if (req.action === "START") {
+        startAutoRun();
+    }
+
+    if (req.action === "STOP") {
+        stopAutoRun();
+    }
 });
